@@ -6,11 +6,15 @@ import (
 )
 
 var (
-	csvFile = "contacts.csv"
+	csvFile              = "contacts.csv"
+	selfContactName      = "Thomas"
+	whatsappVersionMajor = 3
+	whatsappVersionMinor = 2123
+	whatsappVersionPatch = 17
 )
 
 func main() {
-	wac := NewWhatsAppClient(3, 2123, 7)
+	wac := NewWhatsAppClient(whatsappVersionMajor, whatsappVersionMinor, whatsappVersionPatch)
 	err := wac.Login()
 	if err != nil {
 		log.Fatal("unable to log into whatsapp")
@@ -24,14 +28,14 @@ func main() {
 	picks := Randomize(contacts)
 
 	for picked, picking := range picks {
-		msgId, err := wac.SendMessage(picking.Number, fmt.Sprintf("You picked: %s", picked.Name))
+		msgId, err := wac.SendMessage(picking.Number, fmt.Sprintf("You picked for secret santa: %s", picked.Name))
 		if err != nil {
 			log.Fatal("error sending message")
 		}
 
 		fmt.Printf("Send secret santa to: %s\n", picking.Name)
 
-		if picking.Name != "Thomas" {
+		if picking.Name != selfContactName {
 			err = wac.DeleteMessage(picking.Number, msgId)
 			if err != nil {
 				log.Fatal("error deleting message")
